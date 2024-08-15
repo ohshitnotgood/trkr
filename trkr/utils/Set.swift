@@ -23,10 +23,12 @@ class Set: Equatable, Hashable, ObservableObject {
         hasher.combine(id)
     }
     
-    @Published var weight: String
-    @Published var reps: String
     @Published var restTime: Int = 0
     @Published var completed: Bool = false
+    @Published var currentRestTime = "00:00:00"
+    
+    @Published var weight: String
+    @Published var reps: String
     
     let id: Int
     let previous: String
@@ -37,7 +39,7 @@ class Set: Equatable, Hashable, ObservableObject {
         self.weight = ""
         self.reps = ""
         self.previous = ""
-        self.averageRestTime = ""
+        self.averageRestTime = "00:00:00"
     }
     
     init(id: Int, weight: String, reps: String, previous: String, averageRestTime: String) {

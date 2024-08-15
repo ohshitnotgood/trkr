@@ -17,6 +17,7 @@ struct ExerciseView: View {
                     ForEach(viewModel.exercises, id: \.self) { eachExercise in
                         // CardView
                         ExerciseCardView(exercise: eachExercise)
+                            .environmentObject(viewModel)
                         // End card view
                     }
                 }

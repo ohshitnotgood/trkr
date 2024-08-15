@@ -13,6 +13,9 @@ import SwiftUI
 struct BottomBar: View {
     @EnvironmentObject var viewModel: ExerciseViewModel
     
+    @State var totalDisplayTime = "00:00:00"
+    @State var restDisplayTime = "00:00:00"
+    
     var body: some View {
         VStack {
             Spacer()
@@ -32,14 +35,16 @@ struct BottomBar: View {
                     Divider()
                         .frame(height: 20)
                     
-                    HStack (spacing: 4) {
-                        Image(systemName: "timer")
-                        Text("Rest")
-                        Text(viewModel.restDisplayTime)
-                            .fontWeight(.semibold)
-                            .fontDesign(.monospaced)
-                    }.padding(10)
-                        .frame(width: 130)
+//                    if viewModel.isCurrentlyResting {
+//                        HStack (spacing: 4) {
+//                            Image(systemName: "timer")
+//                            Text("Rest")
+//                            Text(restDisplayTime)
+//                                .fontWeight(.semibold)
+//                                .fontDesign(.monospaced)
+//                        }.padding(10)
+//                            .frame(width: 130)
+//                    }
                     
                     Divider()
                         .frame(height: 20)
@@ -47,19 +52,23 @@ struct BottomBar: View {
                     HStack (spacing: 4) {
                         Image(systemName: "clock")
                         Text("Total")
-                        Text(viewModel.totalDisplayTime)
+                        Text(totalDisplayTime)
                             .fontWeight(.semibold)
-                            .fontDesign(.monospaced)
                     }.padding(10)
-                        .frame(width: 130)
                     
                 }
-                .font(.caption)
+                .font(.subheadline)
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: .infinity))
                 .padding(.vertical)
             }
         }
+        .onReceive(viewModel.$totalDisplayTime, perform: { nv in
+            totalDisplayTime = nv
+        })
+        .onReceive(viewModel.$restDisplayTime, perform: { nv in
+            restDisplayTime = nv
+        })
         
     }
 }

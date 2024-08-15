@@ -12,6 +12,7 @@ import SwiftUI
  Represents an exercise within a single workout.
  */
 class Exercise: ObservableObject, Hashable, Identifiable {
+    let id = UUID()
     let name: String
     let pr: String
     let group: ExerciseGroup
@@ -28,18 +29,18 @@ class Exercise: ObservableObject, Hashable, Identifiable {
     }
     
     static func == (lhs: Exercise, rhs: Exercise) -> Bool {
-        return lhs.name == rhs.name
+        return lhs.id == rhs.id
     }
     
     static var dummyExercises: [Exercise] = [
         .init(name: "Bench Press", pr: "40", group: .chest, lastPerformed: "01 August 2024", sets: []),
-        .init(name: "Bicep Curls", pr: "40", group: .biceps, lastPerformed: "12 August 2024", sets: []),
-        .init(name: "Chest Press", pr: "40", group: .chest, lastPerformed: "31 July 2024", sets: []),
+        .init(name: "Bicep Curls", pr: "140", group: .biceps, lastPerformed: "12 August 2024", sets: []),
+        .init(name: "Chest Press", pr: "140", group: .chest, lastPerformed: "31 July 2024", sets: []),
         .init(name: "Leg Press", pr: "310", group: .legs, lastPerformed: "30 August 2024", sets: [])
     ]
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(self.name)
+        hasher.combine(self.id)
     }
     
     static func getDummy() -> Exercise {

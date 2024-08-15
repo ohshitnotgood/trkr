@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ExerciseCardView: View {
+    @EnvironmentObject private var viewModel: ExerciseViewModel
     @StateObject var exercise: Exercise
     
     var body: some View {
@@ -35,7 +36,8 @@ struct ExerciseCardView: View {
                         
                         VStack (spacing: 0) {
                             ForEach(exercise.sets, id: \.self) { eachSet in
-                                ExerciseCardSetRowView(set: eachSet, isLastSet: eachSet.id == exercise.sets.last?.id)
+                                ExerciseCardSetRowView(set: eachSet)
+                                    .environmentObject(viewModel)
                             }
                         }.clipShape(RoundedRectangle(cornerRadius: 10))
                     }.padding()
@@ -60,20 +62,24 @@ struct ExerciseCardGroupView: View {
 }
 
 struct ExerciseCardSetRowView: View {
+    @EnvironmentObject private var viewModel: ExerciseViewModel
     @StateObject var set: Set
     @State var offset: CGSize = .zero
-    @State var isLastSet: Bool
+    @State private var onceCompleted = false
+    @State private var zerosInHistory = 0
     
     
     var body: some View {
         VStack {
             VStack (spacing: 0) {
                 HStack {
+                    // Set ID
                     Text("\(set.id)")
                         .frame(width: 30, height: 30)
                         .background(.ultraThickMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                     
+                    // Previous marker
                     HStack {
                         Spacer()
                         Text(set.previous == "" ? "-" : set.previous)
@@ -84,6 +90,7 @@ struct ExerciseCardSetRowView: View {
                     .background(.ultraThickMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
                     
+                    // Weights text field
                     TextField("", text: $set.weight)
                         .frame(width: 65, height: 30)
                         .multilineTextAlignment(.center)
@@ -91,6 +98,7 @@ struct ExerciseCardSetRowView: View {
                         .background(.ultraThickMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                     
+                    // Reps text field
                     TextField("", text: $set.reps)
                         .frame(width: 65, height: 30)
                         .multilineTextAlignment(.center)
@@ -100,6 +108,10 @@ struct ExerciseCardSetRowView: View {
                     
                     // Checkmark button for marking a set complete.
                     Button {
+                        withAnimation {
+                            self.viewModel.isCurrentlyResting = true
+                            self.viewModel.restTime = 0
+                        }
                         self.set.completed.toggle()
                     } label: {
                         if set.completed {
@@ -127,34 +139,47 @@ struct ExerciseCardSetRowView: View {
                     }
             )
             
-            // If this set is not the last set, then the average rest time along with the current rest time is displayed.
-            // If it is indeed the last set, then the rest time is displayed outside the exercise card in it's own view
-            // The current rest time (which is ticking) is only shown when the current set has been marked as complete.
-            if (!isLastSet) {
-                ZStack {
-                    Divider()
+            // Divider with rest counter
+            ZStack {
+                Divider()
+                HStack {
                     HStack {
-                        HStack {
-                            Image(systemName: "timer")
-                            Text("Avg: \(set.averageRestTime)")
-                        }
-                        if (self.set.completed) {
+                        Image(systemName: "timer")
+                        Text("Avg: \(set.averageRestTime)")
+                    }
+                    if (self.set.completed) {
+                        Button {
+                            withAnimation {
+                                viewModel.isCurrentlyResting = false
+                            }
+                        } label: {
                             HStack {
                                 Image(systemName: "timer")
-                                Text("Curr: \(set.restTime)")
+                                Text("Curr: \(set.currentRestTime)")
                             }
-                        }
-                    }.foregroundStyle(.secondary)
-                        .padding(.horizontal, 5)
-                        .background(.regularMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                        .padding(.vertical, 2)
-                }.font(.caption)
+                        }.buttonStyle(.plain)
+                    }
+                }.foregroundStyle(.secondary)
+                    .padding(.horizontal, 5)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .padding(.vertical, 2)
+            }.font(.caption)
+        }.onReceive(viewModel.$restDisplayTime, perform: { nv in
+            if self.set.completed {
+                // Keep track of the number of times the currentRest value is reset
+                if self.viewModel.restTime == 0  {
+                    zerosInHistory += 1
+                }
+                
+                // If the number of resets is less then 0, only then you update the UI
+                // There is at most 2 valid counter resets
+                // Once when the current counter starts
+                // Once when the next counter starts
+                if zerosInHistory < 2 {
+                    self.set.currentRestTime = nv
+                }
             }
-        }
+        })
     }
 }
-//
-//#Preview {
-//    ExerciseCardView(exercise: Exercise.getDummy())
-//}
