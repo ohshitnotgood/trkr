@@ -36,7 +36,7 @@ struct ExerciseCardView: View {
                         
                         VStack (spacing: 0) {
                             ForEach(exercise.sets, id: \.self) { eachSet in
-                                EXCardSetGroupView(set: eachSet)
+                                ExerciseCardSetRowView(set: eachSet)
                                     .environmentObject(viewModel)
                                     .environmentObject(exercise)
                             }

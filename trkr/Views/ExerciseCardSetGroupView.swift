@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-struct EXCardSetGroupView: View {
+struct ExerciseCardSetRowView: View {
     @EnvironmentObject private var viewModel: ExerciseViewModel
     @EnvironmentObject var exercises: Exercise
     
@@ -127,26 +127,29 @@ struct EXCardSetGroupView: View {
                             .background(.ultraThickMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
                         
+                        VStack {
+                            
+                        }.frame(width: 20)
                         // Checkmark button for marking a set complete.
-                        Button {
-                            withAnimation {
-                                self.viewModel.isCurrentlyResting = true
-                                self.viewModel.restTime = 0
-                            }
-                            index.completed.wrappedValue.toggle()
-                        } label: {
-                            if index.completed.wrappedValue {
-                                Image(systemName: "checkmark.square.fill")
-                                    .resizable()
-                            } else {
-                                Image(systemName: "square")
-                                    .resizable()
-                            }
-                        }.buttonStyle(.plain)
-                            .frame(width: 25, height: 25)
-                            .foregroundStyle(.secondary)
+//                        Button {
+//                            withAnimation {
+//                                self.viewModel.isCurrentlyResting = true
+//                                self.viewModel.restTime = 0
+//                            }
+//                            index.completed.wrappedValue.toggle()
+//                        } label: {
+//                            if index.completed.wrappedValue {
+//                                Image(systemName: "checkmark.square.fill")
+//                                    .resizable()
+//                            } else {
+//                                Image(systemName: "square")
+//                                    .resizable()
+//                            }
+//                        }.buttonStyle(.plain)
+//                            .frame(width: 25, height: 25)
+//                            .foregroundStyle(.secondary)
                     }.padding(.vertical, 5)
-                        .padding(.leading, subsetIndentation)
+                        .padding(.horizontal, 10)
                         .onAppear(perform: {
                             self.subsetIndentation += 10
                         })
@@ -201,10 +204,6 @@ struct EXCardSetGroupView: View {
 
 
 
-enum ExerciseCardRowType {
-    case set, subset
-}
-
 #Preview {
-    EXCardSetGroupView(set: .init(id: 0))
+    ExerciseCardSetRowView(set: .init(id: 0))
 }

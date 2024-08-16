@@ -17,15 +17,14 @@ class Exercise: ObservableObject, Hashable, Identifiable {
     let pr: String
     let group: ExerciseGroup
     let lastPerformed: String
-    @Published var sets: [Set]
+    @Published var sets: [Set] = [.init(id: 1)]
     
     
-    init(name: String, pr: String, group: ExerciseGroup, lastPerformed: String, sets: [Set]) {
+    init(name: String, pr: String, group: ExerciseGroup, lastPerformed: String) {
         self.name = name
         self.pr = pr
         self.group = group
         self.lastPerformed = lastPerformed
-        self.sets = sets
     }
     
     static func == (lhs: Exercise, rhs: Exercise) -> Bool {
@@ -33,10 +32,10 @@ class Exercise: ObservableObject, Hashable, Identifiable {
     }
     
     static var dummyExercises: [Exercise] = [
-        .init(name: "Bench Press", pr: "40", group: .chest, lastPerformed: "01 August 2024", sets: []),
-        .init(name: "Bicep Curls", pr: "140", group: .biceps, lastPerformed: "12 August 2024", sets: []),
-        .init(name: "Chest Press", pr: "140", group: .chest, lastPerformed: "31 July 2024", sets: []),
-        .init(name: "Leg Press", pr: "310", group: .legs, lastPerformed: "30 August 2024", sets: [])
+        .init(name: "Bench Press", pr: "40", group: .chest, lastPerformed: "01 August 2024"),
+        .init(name: "Bicep Curls", pr: "140", group: .biceps, lastPerformed: "12 August 2024"),
+        .init(name: "Chest Press", pr: "140", group: .chest, lastPerformed: "31 July 2024"),
+        .init(name: "Leg Press", pr: "310", group: .legs, lastPerformed: "30 August 2024")
     ]
     
     func hash(into hasher: inout Hasher) {

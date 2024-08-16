@@ -12,7 +12,7 @@ class ExerciseViewModel: ObservableObject {
     /**
      List of exercises that are in the current workout.
      */
-    @Published var exercises: [Exercise] = [Exercise.getDummy()]
+    @Published var exercises: [Exercise] = []
     
     /**
      The total time of the workout in seconds, displayed as an Int
