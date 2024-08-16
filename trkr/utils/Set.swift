@@ -16,7 +16,7 @@ class Set: Equatable, Hashable, ObservableObject {
     }
     
     static func == (lhs: Set, rhs: Set) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.uid == rhs.uid
     }
     
     func hash(into hasher: inout Hasher) {
@@ -26,13 +26,16 @@ class Set: Equatable, Hashable, ObservableObject {
     @Published var restTime: Int = 0
     @Published var completed: Bool = false
     @Published var currentRestTime = "00:00:00"
+    @Published var subsets: [Subset] = []
     
     @Published var weight: String
     @Published var reps: String
+    @Published var id: Int
     
-    let id: Int
     let previous: String
     let averageRestTime: String
+
+    let uid = UUID()
     
     init(id: Int) {
         self.id = id
@@ -48,5 +51,42 @@ class Set: Equatable, Hashable, ObservableObject {
         self.reps = reps
         self.previous = previous
         self.averageRestTime = averageRestTime
+    }
+    
+    func addSubset() {
+        self.subsets.append(.init(weight: "", reps: ""))
+    }
+    
+    func convertToSubset() -> Subset {
+        return .init(weight: self.weight, reps: self.reps)
+    }
+}
+
+class Subset: ObservableObject, Hashable {
+    @Published var weight: String
+    @Published var reps: String
+    @Published var completed: Bool = false
+    
+    var uid = UUID()
+    
+    var previous: String = ""
+    
+    init(weight: String, reps: String) {
+        self.weight = weight
+        self.reps = reps
+    }
+    
+    init(uid: UUID, weight: String, reps: String) {
+        self.uid = uid
+        self.weight = weight
+        self.reps = reps
+    }
+    
+    static func == (lhs: Subset, rhs: Subset) -> Bool {
+        return lhs.uid == rhs.uid
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(uid)
     }
 }
